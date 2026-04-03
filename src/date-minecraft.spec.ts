@@ -220,6 +220,35 @@ describe("Date Minecraft", () => {
             expect(() => DateMinecraft.fromFormat("abc")).toThrow();
         });
     });
+    describe("fromDate", () => {
+        test("should return a DateMinecraft instance", () => {
+            const d = DateMinecraft.fromDate(new Date());
+            expect(d).toBeInstanceOf(DateMinecraft);
+        });
+        test("MINECRAFT_BIRTH date should return tick 0", () => {
+            const birth = new Date(DateMinecraft.MINECRAFT_BIRTH);
+            const d = DateMinecraft.fromDate(birth);
+            expect(d.tick).toBe(0);
+        });
+        test("one real second after birth should return 50 ticks", () => {
+            const date = new Date(DateMinecraft.MINECRAFT_BIRTH + 1_000);
+            const d = DateMinecraft.fromDate(date);
+            expect(d.tick).toBe(50);
+        });
+        test("one real minute after birth should return 3000 ticks", () => {
+            const date = new Date(DateMinecraft.MINECRAFT_BIRTH + 60_000);
+            const d = DateMinecraft.fromDate(date);
+            expect(d.tick).toBe(3_000);
+        });
+        test("fromDate result should be consistent with now() at same timestamp", () => {
+            const before = DateMinecraft.now();
+            const date = new Date();
+            const after = DateMinecraft.now();
+            const d = DateMinecraft.fromDate(date);
+            expect(d.tick).toBeGreaterThanOrEqual(Math.floor(before));
+            expect(d.tick).toBeLessThanOrEqual(Math.ceil(after));
+        });
+    });
     describe("now", () => {
         test("should return a number", () => {
             expect(typeof DateMinecraft.now()).toBe("number");

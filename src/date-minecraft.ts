@@ -122,6 +122,11 @@ export class DateMinecraft {
             + seconds * TICKS_PER_SECOND;
     }
 
+    static fromDate(date: Date): DateMinecraft {
+        const ms = date.getTime() - DateMinecraft.MINECRAFT_BIRTH;
+        return new DateMinecraft(Math.floor((ms / 1000) * DateMinecraft.MS_PER_TICK));
+    }
+
     static now(): number {
         const ms = Date.now() - DateMinecraft.MINECRAFT_BIRTH;
         return (ms / 1000) * DateMinecraft.MS_PER_TICK;
