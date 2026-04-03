@@ -1,6 +1,6 @@
 {
   "name": "@jondotsoy/date-minecraft",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "A library to work with Minecraft dates and ticks",
   "module": "lib/date-minecraft.js",
   "main": "lib/date-minecraft.js",
