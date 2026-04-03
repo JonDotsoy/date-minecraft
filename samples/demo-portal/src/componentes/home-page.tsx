@@ -1,5 +1,6 @@
 import { useEffect, useId, useMemo, useState } from "react";
 import { DateMinecraft } from "../../../../src/date-minecraft";
+import { Temporal } from "temporal-polyfill";
 import { MinecraftClock } from "./minecraft-clock";
 
 const useCurrentTick = () => {
@@ -345,7 +346,9 @@ function TickReferenceTable() {
             <tbody>
                 {REFERENCE_TICKS.map((tick) => {
                     const dm = DateMinecraft.fromTick(tick);
-                    const humeTime = new Date(DateMinecraft.MINECRAFT_BIRTH + tick * DateMinecraft.MS_PER_TICK).toLocaleString();
+                    const totalMs = tick * DateMinecraft.MS_PER_TICK;
+                    const duration = Temporal.Duration.from({ milliseconds: totalMs }).round({ largestUnit: "days", smallestUnit: "seconds" });
+                    const humeTime = `${duration.days}d ${String(duration.hours).padStart(2, "0")}:${String(duration.minutes).padStart(2, "0")}:${String(duration.seconds).padStart(2, "0")}`;
                     const gameTime = dm.toLocaleString();
                     return (
                         <tr key={tick}>
