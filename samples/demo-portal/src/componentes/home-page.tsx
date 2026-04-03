@@ -419,19 +419,22 @@ export function HomePage() {
                 </div>
                 <CodeBlock code={`import { DateMinecraft } from "@jondotsoy/date-minecraft";
 
-// Create from a tick number
-const d = DateMinecraft.fromTick(6000);
-console.log(d.hour);    // 12
-console.log(d.minute);  // 0
-console.log(d.toLocaleString()); // "Day 1, 12:00:00"
+// From a tick number
+const a = new DateMinecraft(6000);
+console.log(a.hour);    // 12
+console.log(a.minute);  // 0
+console.log(a.toLocaleString()); // "Day 0, 12:00:00"
+
+// From a time string
+const b = new DateMinecraft("18:00");
+console.log(b.tick);    // 18000
+
+// Ticks since Minecraft's launch (May 16, 2009)
+const ticks = DateMinecraft.now();
+const current = new DateMinecraft(ticks);
 
 // Get ticks per day constant
-console.log(DateMinecraft.TICKS_PER_DAY); // 24000
-
-// Convert ms to ticks
-const ms = Date.now();
-const ticks = (ms / 1000) * DateMinecraft.MS_PER_TICK;
-const current = DateMinecraft.fromTick(ticks);`} />
+console.log(DateMinecraft.TICKS_PER_DAY); // 24000`} />
             </McPanel>
 
             {/* Footer */}
