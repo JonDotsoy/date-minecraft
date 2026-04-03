@@ -1,14 +1,14 @@
 {
   "name": "@jondotsoy/date-minecraft",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A library to work with Minecraft dates and ticks",
-  "module": "lib/index.js",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "module": "lib/date-minecraft.js",
+  "main": "lib/date-minecraft.js",
+  "types": "lib/date-minecraft.d.ts",
   "exports": {
     ".": {
-      "import": "./lib/index.js",
-      "types": "./lib/index.d.ts"
+      "import": "./lib/date-minecraft.js",
+      "types": "./lib/date-minecraft.d.ts"
     }
   },
   "files": [
