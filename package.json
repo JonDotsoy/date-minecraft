@@ -19,6 +19,7 @@
     "prepack": "rm -rf lib && tsc -p tsconfig.esm.json"
   },
   "author": "Jonathan Delgado <hi@jon.soy> (https://jon.soy)",
+  "keywords": ["minecraft"],
   "license": "MIT",
   "private": false,
   "devDependencies": {
