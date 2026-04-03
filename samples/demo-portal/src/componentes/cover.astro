@@ -1,0 +1,10 @@
+---
+import { getImage } from "astro:assets";
+import coverImage from "./cover.png";
+
+export const cover = getImage({
+    src: coverImage,
+    width: 1200,
+    height: 630,
+});
+---
