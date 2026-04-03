@@ -210,11 +210,80 @@ const codeStyle: React.CSSProperties = {
     marginBottom: "8px",
 };
 
+type Token = { type: "keyword" | "string" | "comment" | "number" | "punctuation" | "text"; value: string };
+
+const JS_KEYWORDS = new Set(["import", "from", "const", "let", "var", "new", "return", "if", "else", "function", "class", "export", "default", "typeof", "instanceof", "console"]);
+
+function tokenize(code: string): Token[] {
+    const tokens: Token[] = [];
+    let i = 0;
+    while (i < code.length) {
+        // Single-line comment
+        if (code[i] === "/" && code[i + 1] === "/") {
+            const end = code.indexOf("\n", i);
+            const value = end === -1 ? code.slice(i) : code.slice(i, end);
+            tokens.push({ type: "comment", value });
+            i += value.length;
+        // String (single, double, backtick)
+        } else if (code[i] === '"' || code[i] === "'" || code[i] === "`") {
+            const q = code[i];
+            let j = i + 1;
+            while (j < code.length && code[j] !== q) {
+                if (code[j] === "\\") j++;
+                j++;
+            }
+            tokens.push({ type: "string", value: code.slice(i, j + 1) });
+            i = j + 1;
+        // Number
+        } else if (/[0-9]/.test(code[i])) {
+            let j = i;
+            while (j < code.length && /[0-9.]/.test(code[j])) j++;
+            tokens.push({ type: "number", value: code.slice(i, j) });
+            i = j;
+        // Identifier or keyword
+        } else if (/[a-zA-Z_$]/.test(code[i])) {
+            let j = i;
+            while (j < code.length && /[a-zA-Z0-9_$]/.test(code[j])) j++;
+            const word = code.slice(i, j);
+            tokens.push({ type: JS_KEYWORDS.has(word) ? "keyword" : "text", value: word });
+            i = j;
+        // Punctuation
+        } else if (/[(){}[\];,.:=<>!+\-*/&|]/.test(code[i])) {
+            tokens.push({ type: "punctuation", value: code[i] });
+            i++;
+        } else {
+            tokens.push({ type: "text", value: code[i] });
+            i++;
+        }
+    }
+    return tokens;
+}
+
+const TOKEN_COLORS: Record<Token["type"], string> = {
+    keyword: "#FF9955",
+    string: "#55FF55",
+    comment: "#777777",
+    number: "#FFFF55",
+    punctuation: "#AAAAAA",
+    text: "#AAFFAA",
+};
+
+function HighlightedCode({ code }: { code: string }) {
+    const tokens = tokenize(code);
+    return (
+        <>
+            {tokens.map((tok, i) => (
+                <span key={i} style={{ color: TOKEN_COLORS[tok.type] }}>{tok.value}</span>
+            ))}
+        </>
+    );
+}
+
 function CodeBlock({ code }: { code: string }) {
     const [copied, setCopied] = useState(false);
     return (
         <div style={{ position: "relative" }}>
-            <pre style={codeStyle}>{code}</pre>
+            <pre style={codeStyle}><HighlightedCode code={code} /></pre>
             <button
                 onClick={() => {
                     navigator.clipboard.writeText(code).then(() => {
@@ -371,6 +440,38 @@ const ms = Date.now();
 const ticks = (ms / 1000) * DateMinecraft.MS_PER_TICK;
 const current = DateMinecraft.fromTick(ticks);`} />
             </McPanel>
+
+            {/* Footer */}
+            <div style={{
+                textAlign: "center",
+                padding: "12px",
+                color: "#555555",
+                fontSize: "7px",
+                textShadow: "1px 1px #111111",
+            }}>
+                © {new Date().getFullYear()} — created by{" "}
+                <a
+                    href="https://jon.soy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: "#AAFFAA", textDecoration: "none" }}
+                    onMouseEnter={e => (e.currentTarget.style.textDecoration = "underline")}
+                    onMouseLeave={e => (e.currentTarget.style.textDecoration = "none")}
+                >
+                    @jondotsoy
+                </a>
+                {" · "}
+                <a
+                    href="https://github.com/jondotsoy/date-minecraft"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: "#AAFFAA", textDecoration: "none" }}
+                    onMouseEnter={e => (e.currentTarget.style.textDecoration = "underline")}
+                    onMouseLeave={e => (e.currentTarget.style.textDecoration = "none")}
+                >
+                    GitHub
+                </a>
+            </div>
         </div>
     );
 }
