@@ -309,6 +309,57 @@ function CodeBlock({ code }: { code: string }) {
     );
 }
 
+// ── Ticks reference table ────────────────────────────────────────────────────
+
+const REFERENCE_TICKS = [0, 1000, 6000, 12000, 18000, 24000, 48000, 72000];
+
+function TickReferenceTable() {
+    const thStyle: React.CSSProperties = {
+        background: MC_DARK,
+        color: MC_GRAY,
+        fontSize: "7px",
+        letterSpacing: "1px",
+        padding: "4px 8px",
+        textAlign: "left",
+        fontWeight: "bold",
+        borderBottom: `2px solid ${MC_BLACK}`,
+    };
+    const tdStyle: React.CSSProperties = {
+        background: MC_SLOT,
+        color: MC_BLACK,
+        fontSize: "7px",
+        padding: "3px 8px",
+        borderBottom: `1px solid ${MC_DARK}`,
+        whiteSpace: "nowrap",
+    };
+
+    return (
+        <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "auto" }}>
+            <thead>
+                <tr>
+                    <th style={thStyle}>TICKS</th>
+                    <th style={thStyle}>HUME TIME</th>
+                    <th style={thStyle}>GAME TIME</th>
+                </tr>
+            </thead>
+            <tbody>
+                {REFERENCE_TICKS.map((tick) => {
+                    const dm = DateMinecraft.fromTick(tick);
+                    const humeTime = new Date(DateMinecraft.MINECRAFT_BIRTH + tick * DateMinecraft.MS_PER_TICK).toLocaleString();
+                    const gameTime = dm.toLocaleString();
+                    return (
+                        <tr key={tick}>
+                            <td style={tdStyle}>{tick.toLocaleString()}</td>
+                            <td style={tdStyle}>{humeTime}</td>
+                            <td style={tdStyle}>{gameTime}</td>
+                        </tr>
+                    );
+                })}
+            </tbody>
+        </table>
+    );
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export function HomePage() {
@@ -405,6 +456,11 @@ export function HomePage() {
             {/* Converter: hour → clock */}
             <McPanel title="HOUR → CLOCK">
                 <InputClock />
+            </McPanel>
+
+            {/* Ticks reference table */}
+            <McPanel title="TICKS REFERENCE">
+                <TickReferenceTable />
             </McPanel>
 
             {/* Usage instructions */}
