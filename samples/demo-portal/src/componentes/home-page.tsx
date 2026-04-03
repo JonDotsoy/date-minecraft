@@ -580,12 +580,12 @@ export function HomePage() {
 
             {/* Usage instructions */}
             <McPanel title="HOW TO USE">
-                <div style={{ ...labelStyle, fontSize: "7px", color: "#AAAAAA", marginBottom: "8px" }}>
+                <div style={{ ...labelStyle, fontSize: "7px", color: MC_DARK, marginBottom: "8px" }}>
                     Install the package:
                 </div>
                 <CodeBlock code={`npm install @jondotsoy/date-minecraft`} />
 
-                <div style={{ ...labelStyle, fontSize: "7px", color: "#AAAAAA", marginBottom: "8px", marginTop: "10px" }}>
+                <div style={{ ...labelStyle, fontSize: "7px", color: MC_DARK, marginBottom: "8px", marginTop: "10px" }}>
                     Import and use:
                 </div>
                 <CodeBlock code={`import { DateMinecraft } from "@jondotsoy/date-minecraft";
