@@ -375,7 +375,7 @@ function TickReferenceTable() {
             <thead>
                 <tr>
                     <th style={thStyle}>TICKS</th>
-                    <th style={thStyle}>HUME TIME</th>
+                    <th style={thStyle}>HUMAN TIME</th>
                     <th style={thStyle}>GAME TIME</th>
                 </tr>
             </thead>
