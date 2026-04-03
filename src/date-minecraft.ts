@@ -44,7 +44,11 @@ export class DateMinecraft {
         days: DateMinecraft.totalsFunctions.day,
     }
 
-    total({ unit, _fixed }: { unit: keyof typeof DateMinecraft.totalsFunctionsWithPlural, _fixed?: number }): number {
+    total({ unit, _fixed }: {
+        unit: keyof typeof DateMinecraft.totalsFunctionsWithPlural,
+        /*  * @experimental */
+        _fixed?: number
+    }): number {
         const totalFunction = DateMinecraft.totalsFunctionsWithPlural[unit];
         const total = totalFunction(this.tick);
         return _fixed !== undefined ? parseFloat(total.toFixed(_fixed)) : total;
@@ -55,6 +59,27 @@ export class DateMinecraft {
         const pad3 = (n: number) => n.toString().padStart(3, "0");
         const day = Math.floor(this.tick / DateMinecraft.TICKS_PER_DAY);
         return `D${day}T${pad2(this.hour)}:${pad2(this.minute)}:${pad2(this.second)}.${pad3(this.millisecond)}`;
+    }
+
+    toLocaleString(locales?: string | string[], options?: {}): string {
+        const format = (...args: Parameters<typeof String.raw>) => ({
+            template: args[0],
+            keysRemaining: args.slice(1),
+        })
+
+        const { template, keysRemaining } = format`Day ${"gameDays"}, ${"hour"}:${"minute"}:${"second"}.${"millisecond"}`;
+
+        const gameDays = this.total({ unit: "day", _fixed: 0 });
+
+        const map: Record<string, string> = {
+            gameDays: gameDays.toString(),
+            hour: this.hour.toString().padStart(2, "0"),
+            minute: this.minute.toString().padStart(2, "0"),
+            second: this.second.toString().padStart(2, "0"),
+            millisecond: this.millisecond.toString().padStart(3, "0"),
+        }
+
+        return String.raw(template, ...keysRemaining.map(key => map[key]))
     }
 
     static fromTick(tick: number): DateMinecraft {

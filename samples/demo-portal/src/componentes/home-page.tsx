@@ -14,8 +14,13 @@ const useCurrentTick = () => {
     const dateMinecraft = useMemo(() => DateMinecraft.fromTick(tick), [tick]);
 
     useEffect(() => {
-        const interval = setInterval(() => setTick(getTotalTicksSinceBirth()), 200);
-        return () => clearInterval(interval);
+        let raf: number;
+        const loop = () => {
+            setTick(getTotalTicksSinceBirth());
+            raf = requestAnimationFrame(loop);
+        };
+        raf = requestAnimationFrame(loop);
+        return () => cancelAnimationFrame(raf);
     }, []);
 
     return [tick, dateMinecraft] as const;
@@ -92,7 +97,7 @@ function StatSlot({ label, value }: { label: string; value: string }) {
     return (
         <div style={slotStyle}>
             <span style={labelStyle}>{label}</span>
-            <span style={valueStyle}>{value}</span>
+            <span style={valueStyle}>{value} <ButtonValueToClipboard value={value}></ButtonValueToClipboard></span>
         </div>
     );
 }
@@ -109,7 +114,7 @@ function McPanel({ title, children }: { title?: string; children: React.ReactNod
 function ControlTickToTime() {
     const id = useId();
     const [tick, setTick] = useState(0);
-    const result = DateMinecraft.fromTick(tick).toString();
+    const result = DateMinecraft.fromTick(tick).toLocaleString();
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             <div style={slotStyle}>
@@ -152,6 +157,42 @@ function InputClock() {
                 <MinecraftClock rotation={clockRotation} />
             </div>
         </div>
+    );
+}
+
+function ButtonValueToClipboard({ value }: { value: string }) {
+    const [copied, setCopied] = useState(false);
+
+    const handleClick = () => {
+        navigator.clipboard.writeText(value).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+        });
+    };
+
+    return (
+        <button
+            onClick={handleClick}
+            title="Copy to clipboard"
+            style={{
+                background: copied ? "#55AA55" : "#555555",
+                border: "2px solid",
+                borderTopColor: copied ? "#77CC77" : "#888888",
+                borderLeftColor: copied ? "#77CC77" : "#888888",
+                borderBottomColor: copied ? "#2A6A2A" : "#222222",
+                borderRightColor: copied ? "#2A6A2A" : "#222222",
+                cursor: "pointer",
+                padding: "1px 4px",
+                fontSize: "7px",
+                color: copied ? "#AAFFAA" : "#CCCCCC",
+                textShadow: copied ? "1px 1px #1A3A1A" : "1px 1px #111111",
+                lineHeight: 1,
+                flexShrink: 0,
+                transition: "background 0.15s, color 0.15s",
+            }}
+        >
+            {copied ? "✓" : "⧉"}
+        </button>
     );
 }
 
@@ -238,7 +279,7 @@ export function HomePage() {
             {/* Stats panel */}
             <McPanel title="GAME STATS">
                 <StatSlot label="Day" value={`Day ${day.toLocaleString()}`} />
-                <StatSlot label="Game Time" value={dateMinecraft.toString()} />
+                <StatSlot label="Game Time" value={dateMinecraft.toLocaleString()} />
                 <StatSlot label="Total Ticks" value={Number(totalTicks).toLocaleString()} />
                 <StatSlot label="Real World" value={realDate} />
             </McPanel>

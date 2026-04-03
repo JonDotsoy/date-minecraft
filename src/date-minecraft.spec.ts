@@ -106,6 +106,23 @@ describe("Date Minecraft", () => {
             expect(DateMinecraft.fromTick(72_000).total({ unit: "hours" })).toBe(72);
         });
     });
+    describe("toLocaleString", () => {
+        test("should format tick 0 as 'Day 0, 00:00:00.000'", () => {
+            expect(DateMinecraft.fromTick(0).toLocaleString()).toBe("Day 0, 00:00:00.000");
+        });
+        test("should format tick 1 as 'Day 0, 00:00:03.600'", () => {
+            expect(DateMinecraft.fromTick(1).toLocaleString()).toBe("Day 0, 00:00:03.600");
+        });
+        test("should format tick 1200 as 'Day 0, 01:12:00.000'", () => {
+            expect(DateMinecraft.fromTick(1200).toLocaleString()).toBe("Day 0, 01:12:00.000");
+        });
+        test("should format tick 24000 as 'Day 1, 00:00:00.000'", () => {
+            expect(DateMinecraft.fromTick(24_000).toLocaleString()).toBe("Day 1, 00:00:00.000");
+        });
+        test("should format tick 72000 as 'Day 3, 00:00:00.000'", () => {
+            expect(DateMinecraft.fromTick(72_000).toLocaleString()).toBe("Day 3, 00:00:00.000");
+        });
+    });
     describe("toString", () => {
         test("should format tick 0 as D0T00:00:00.000", () => {
             expect(DateMinecraft.fromTick(0).toString()).toBe("D0T00:00:00.000");
