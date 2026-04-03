@@ -1,5 +1,6 @@
 import { useEffect, useId, useMemo, useState } from "react";
 import { DateMinecraft } from "../../../../src/date-minecraft";
+import { Temporal } from "temporal-polyfill";
 import { MinecraftClock } from "./minecraft-clock";
 
 const useCurrentTick = () => {
@@ -124,6 +125,42 @@ function ControlTickToTime() {
                 <span style={labelStyle}>Result</span>
                 <span style={valueStyle}>{result}</span>
             </div>
+        </div>
+    );
+}
+
+function ControlGameTimeToTick() {
+    const id = useId();
+    const [input, setInput] = useState("");
+
+    const result = (() => {
+        if (!input.trim()) return null;
+        try {
+            return DateMinecraft.fromFormat(input);
+        } catch {
+            return null;
+        }
+    })();
+
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div style={slotStyle}>
+                <label htmlFor={id} style={labelStyle}>Game Time</label>
+                <input
+                    id={id}
+                    type="text"
+                    value={input}
+                    placeholder="12:30  or  D1T6:00"
+                    onChange={e => setInput(e.target.value)}
+                    style={{ ...inputStyle, width: "140px" }}
+                />
+            </div>
+            {result !== null && (
+                <div style={slotStyle}>
+                    <span style={labelStyle}>Ticks</span>
+                    <span style={valueStyle}>{result.toLocaleString()}</span>
+                </div>
+            )}
         </div>
     );
 }
@@ -309,6 +346,59 @@ function CodeBlock({ code }: { code: string }) {
     );
 }
 
+// ── Ticks reference table ────────────────────────────────────────────────────
+
+const REFERENCE_TICKS = [0, 1000, 6000, 12000, 18000, 24000, 48000, 72000];
+
+function TickReferenceTable() {
+    const thStyle: React.CSSProperties = {
+        background: MC_DARK,
+        color: MC_GRAY,
+        fontSize: "7px",
+        letterSpacing: "1px",
+        padding: "4px 8px",
+        textAlign: "left",
+        fontWeight: "bold",
+        borderBottom: `2px solid ${MC_BLACK}`,
+    };
+    const tdStyle: React.CSSProperties = {
+        background: MC_SLOT,
+        color: MC_BLACK,
+        fontSize: "7px",
+        padding: "3px 8px",
+        borderBottom: `1px solid ${MC_DARK}`,
+        whiteSpace: "nowrap",
+    };
+
+    return (
+        <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "auto" }}>
+            <thead>
+                <tr>
+                    <th style={thStyle}>TICKS</th>
+                    <th style={thStyle}>HUMAN TIME</th>
+                    <th style={thStyle}>GAME TIME</th>
+                </tr>
+            </thead>
+            <tbody>
+                {REFERENCE_TICKS.map((tick) => {
+                    const dm = DateMinecraft.fromTick(tick);
+                    const totalMs = tick * DateMinecraft.MS_PER_TICK;
+                    const duration = Temporal.Duration.from({ milliseconds: totalMs }).round({ largestUnit: "days", smallestUnit: "seconds" });
+                    const humeTime = `${duration.days}d ${String(duration.hours).padStart(2, "0")}:${String(duration.minutes).padStart(2, "0")}:${String(duration.seconds).padStart(2, "0")}`;
+                    const gameTime = dm.toLocaleString();
+                    return (
+                        <tr key={tick}>
+                            <td style={tdStyle}>{tick.toLocaleString()}</td>
+                            <td style={tdStyle}>{humeTime}</td>
+                            <td style={tdStyle}>{gameTime}</td>
+                        </tr>
+                    );
+                })}
+            </tbody>
+        </table>
+    );
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export function HomePage() {
@@ -402,9 +492,19 @@ export function HomePage() {
                 <ControlTickToTime />
             </McPanel>
 
+            {/* Converter: game time → ticks */}
+            <McPanel title="GAME TIME → TICK">
+                <ControlGameTimeToTick />
+            </McPanel>
+
             {/* Converter: hour → clock */}
             <McPanel title="HOUR → CLOCK">
                 <InputClock />
+            </McPanel>
+
+            {/* Ticks reference table */}
+            <McPanel title="TICKS REFERENCE">
+                <TickReferenceTable />
             </McPanel>
 
             {/* Usage instructions */}
