@@ -18,7 +18,9 @@
   "scripts": {
     "prepack": "rm -rf lib && tsc -p tsconfig.esm.json"
   },
-  "private": true,
+  "author": "Jonathan Delgado <hi@jon.soy> (https://jon.soy)",
+  "license": "MIT",
+  "private": false,
   "devDependencies": {
     "@types/bun": "latest"
   },

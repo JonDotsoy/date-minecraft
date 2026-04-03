@@ -196,6 +196,57 @@ function ButtonValueToClipboard({ value }: { value: string }) {
     );
 }
 
+const codeStyle: React.CSSProperties = {
+    background: MC_BLACK,
+    border: `2px solid ${MC_BLACK}`,
+    boxShadow: `inset 2px 2px 0 #1A1A1A, inset -2px -2px 0 #5A5A5A`,
+    padding: "10px 12px",
+    fontFamily: "monospace",
+    fontSize: "7px",
+    lineHeight: "1.7",
+    color: "#AAFFAA",
+    whiteSpace: "pre",
+    overflowX: "auto",
+    marginBottom: "8px",
+};
+
+function CodeBlock({ code }: { code: string }) {
+    const [copied, setCopied] = useState(false);
+    return (
+        <div style={{ position: "relative" }}>
+            <pre style={codeStyle}>{code}</pre>
+            <button
+                onClick={() => {
+                    navigator.clipboard.writeText(code).then(() => {
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 1500);
+                    });
+                }}
+                title="Copy to clipboard"
+                style={{
+                    position: "absolute",
+                    top: "4px",
+                    right: "4px",
+                    background: copied ? "#55AA55" : "#555555",
+                    border: "2px solid",
+                    borderTopColor: copied ? "#77CC77" : "#888888",
+                    borderLeftColor: copied ? "#77CC77" : "#888888",
+                    borderBottomColor: copied ? "#2A6A2A" : "#222222",
+                    borderRightColor: copied ? "#2A6A2A" : "#222222",
+                    cursor: "pointer",
+                    padding: "1px 5px",
+                    fontSize: "7px",
+                    color: copied ? "#AAFFAA" : "#CCCCCC",
+                    textShadow: copied ? "1px 1px #1A3A1A" : "1px 1px #111111",
+                    lineHeight: 1,
+                }}
+            >
+                {copied ? "✓" : "⧉"}
+            </button>
+        </div>
+    );
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export function HomePage() {
@@ -292,6 +343,33 @@ export function HomePage() {
             {/* Converter: hour → clock */}
             <McPanel title="HOUR → CLOCK">
                 <InputClock />
+            </McPanel>
+
+            {/* Usage instructions */}
+            <McPanel title="HOW TO USE">
+                <div style={{ ...labelStyle, fontSize: "7px", color: "#AAAAAA", marginBottom: "8px" }}>
+                    Install the package:
+                </div>
+                <CodeBlock code={`npm install @jondotsoy/date-minecraft`} />
+
+                <div style={{ ...labelStyle, fontSize: "7px", color: "#AAAAAA", marginBottom: "8px", marginTop: "10px" }}>
+                    Import and use:
+                </div>
+                <CodeBlock code={`import { DateMinecraft } from "@jondotsoy/date-minecraft";
+
+// Create from a tick number
+const d = DateMinecraft.fromTick(6000);
+console.log(d.hour);    // 12
+console.log(d.minute);  // 0
+console.log(d.toLocaleString()); // "Day 1, 12:00:00"
+
+// Get ticks per day constant
+console.log(DateMinecraft.TICKS_PER_DAY); // 24000
+
+// Convert ms to ticks
+const ms = Date.now();
+const ticks = (ms / 1000) * DateMinecraft.MS_PER_TICK;
+const current = DateMinecraft.fromTick(ticks);`} />
             </McPanel>
         </div>
     );
