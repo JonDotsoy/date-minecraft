@@ -1,7 +1,23 @@
 {
-  "name": "date-minecraft",
-  "module": "index.ts",
+  "name": "@jondotsoy/date-minecraft",
+  "version": "0.0.1",
+  "description": "A library to work with Minecraft dates and ticks",
+  "module": "lib/index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/index.js",
+      "types": "./lib/index.d.ts"
+    }
+  },
+  "files": [
+    "lib"
+  ],
   "type": "module",
+  "scripts": {
+    "prepack": "rm -rf lib && tsc -p tsconfig.esm.json"
+  },
   "private": true,
   "devDependencies": {
     "@types/bun": "latest"

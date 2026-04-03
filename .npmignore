@@ -1,0 +1,8 @@
+node_modules/
+samples/
+src/*.spec.ts
+tsconfig.json
+bun.lock
+CLAUDE.md
+.claude/
+*.tgz

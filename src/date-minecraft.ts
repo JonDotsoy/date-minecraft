@@ -51,7 +51,8 @@ export class DateMinecraft {
     }): number {
         const totalFunction = DateMinecraft.totalsFunctionsWithPlural[unit];
         const total = totalFunction(this.tick);
-        return _fixed !== undefined ? parseFloat(total.toFixed(_fixed)) : total;
+        const totalFixed = _fixed ?? 0;
+        return parseFloat(total.toFixed(totalFixed));
     }
 
     toString(): string {
@@ -61,25 +62,24 @@ export class DateMinecraft {
         return `D${day}T${pad2(this.hour)}:${pad2(this.minute)}:${pad2(this.second)}.${pad3(this.millisecond)}`;
     }
 
-    toLocaleString(locales?: string | string[], options?: {}): string {
-        const format = (...args: Parameters<typeof String.raw>) => ({
-            template: args[0],
-            keysRemaining: args.slice(1),
-        })
+    toLocaleString(locales?: string | string[], options?: { hourCycle?: 'h11' | 'h12' | 'h23' | 'h24' }): string {
+        const pad2 = (n: number) => n.toString().padStart(2, "0");
+        const day = Math.floor(this.tick / DateMinecraft.TICKS_PER_DAY);
+        const hourCycle = options?.hourCycle ?? "h23";
 
-        const { template, keysRemaining } = format`Day ${"gameDays"}, ${"hour"}:${"minute"}:${"second"}.${"millisecond"}`;
+        let hour = this.hour;
+        let suffix = "";
 
-        const gameDays = this.total({ unit: "day", _fixed: 0 });
-
-        const map: Record<string, string> = {
-            gameDays: gameDays.toString(),
-            hour: this.hour.toString().padStart(2, "0"),
-            minute: this.minute.toString().padStart(2, "0"),
-            second: this.second.toString().padStart(2, "0"),
-            millisecond: this.millisecond.toString().padStart(3, "0"),
+        if (hourCycle === "h12" || hourCycle === "h11") {
+            const period = hour < 12 ? "AM" : "PM";
+            hour = hour % 12;
+            if (hourCycle === "h12" && hour === 0) hour = 12;
+            suffix = ` ${period}`;
+        } else if (hourCycle === "h24") {
+            if (hour === 0) hour = 24;
         }
 
-        return String.raw(template, ...keysRemaining.map(key => map[key]))
+        return `Day ${day}, ${pad2(hour)}:${pad2(this.minute)}:${pad2(this.second)}${suffix}`;
     }
 
     static fromTick(tick: number): DateMinecraft {

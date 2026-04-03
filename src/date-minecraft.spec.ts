@@ -107,20 +107,40 @@ describe("Date Minecraft", () => {
         });
     });
     describe("toLocaleString", () => {
-        test("should format tick 0 as 'Day 0, 00:00:00.000'", () => {
-            expect(DateMinecraft.fromTick(0).toLocaleString()).toBe("Day 0, 00:00:00.000");
+        test("should format tick 0 as 'Day 0, 00:00:00'", () => {
+            expect(DateMinecraft.fromTick(0).toLocaleString()).toBe("Day 0, 00:00:00");
         });
-        test("should format tick 1 as 'Day 0, 00:00:03.600'", () => {
-            expect(DateMinecraft.fromTick(1).toLocaleString()).toBe("Day 0, 00:00:03.600");
+        test("should format tick 1 as 'Day 0, 00:00:03'", () => {
+            expect(DateMinecraft.fromTick(1).toLocaleString()).toBe("Day 0, 00:00:03");
         });
-        test("should format tick 1200 as 'Day 0, 01:12:00.000'", () => {
-            expect(DateMinecraft.fromTick(1200).toLocaleString()).toBe("Day 0, 01:12:00.000");
+        test("should format tick 1200 as 'Day 0, 01:12:00'", () => {
+            expect(DateMinecraft.fromTick(1200).toLocaleString()).toBe("Day 0, 01:12:00");
         });
-        test("should format tick 24000 as 'Day 1, 00:00:00.000'", () => {
-            expect(DateMinecraft.fromTick(24_000).toLocaleString()).toBe("Day 1, 00:00:00.000");
+        test("should format tick 24000 as 'Day 1, 00:00:00'", () => {
+            expect(DateMinecraft.fromTick(24_000).toLocaleString()).toBe("Day 1, 00:00:00");
         });
-        test("should format tick 72000 as 'Day 3, 00:00:00.000'", () => {
-            expect(DateMinecraft.fromTick(72_000).toLocaleString()).toBe("Day 3, 00:00:00.000");
+        test("should format tick 72000 as 'Day 3, 00:00:00'", () => {
+            expect(DateMinecraft.fromTick(72_000).toLocaleString()).toBe("Day 3, 00:00:00");
+        });
+        describe("hourCycle", () => {
+            test("should format tick 0 with h23 as '00:00:00'", () => {
+                expect(DateMinecraft.fromTick(0).toLocaleString(undefined, { hourCycle: "h23" })).toBe("Day 0, 00:00:00");
+            });
+            test("should format tick 0 with h24 as '24:00:00'", () => {
+                expect(DateMinecraft.fromTick(0).toLocaleString(undefined, { hourCycle: "h24" })).toBe("Day 0, 24:00:00");
+            });
+            test("should format tick 12000 with h12 as '12:00:00 PM'", () => {
+                expect(DateMinecraft.fromTick(12_000).toLocaleString(undefined, { hourCycle: "h12" })).toBe("Day 0, 12:00:00 PM");
+            });
+            test("should format tick 0 with h12 as '12:00:00 AM'", () => {
+                expect(DateMinecraft.fromTick(0).toLocaleString(undefined, { hourCycle: "h12" })).toBe("Day 0, 12:00:00 AM");
+            });
+            test("should format tick 0 with h11 as '00:00:00 AM'", () => {
+                expect(DateMinecraft.fromTick(0).toLocaleString(undefined, { hourCycle: "h11" })).toBe("Day 0, 00:00:00 AM");
+            });
+            test("should format tick 12000 with h11 as '00:00:00 PM'", () => {
+                expect(DateMinecraft.fromTick(12_000).toLocaleString(undefined, { hourCycle: "h11" })).toBe("Day 0, 00:00:00 PM");
+            });
         });
     });
     describe("toString", () => {
