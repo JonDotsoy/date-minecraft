@@ -111,6 +111,10 @@ export class DateMinecraft {
             }
         }
 
+        if (hours > 23) throw new RangeError(`Hours out of range: ${hours} (expected 0-23)`);
+        if (minutes > 59) throw new RangeError(`Minutes out of range: ${minutes} (expected 0-59)`);
+        if (seconds > 59) throw new RangeError(`Seconds out of range: ${seconds} (expected 0-59)`);
+
         return days * DateMinecraft.TICKS_PER_DAY
             + hours * TICKS_PER_HOUR
             + minutes * TICKS_PER_MINUTE

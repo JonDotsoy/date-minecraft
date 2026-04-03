@@ -183,7 +183,17 @@ describe("Date Minecraft", () => {
         test("'D72T00:00:00' should return 1728000 ticks", () => {
             expect(DateMinecraft.fromFormat("D72T00:00:00")).toBe(1_728_000);
         });
-        // invalid
+        // out of range
+        test("minutes >= 60 should throw RangeError", () => {
+            expect(() => DateMinecraft.fromFormat("00:60")).toThrow(RangeError);
+        });
+        test("seconds >= 60 should throw RangeError", () => {
+            expect(() => DateMinecraft.fromFormat("00:00:60")).toThrow(RangeError);
+        });
+        test("hours >= 24 should throw RangeError", () => {
+            expect(() => DateMinecraft.fromFormat("24:00")).toThrow(RangeError);
+        });
+        // invalid format
         test("invalid format should throw", () => {
             expect(() => DateMinecraft.fromFormat("abc")).toThrow();
         });
