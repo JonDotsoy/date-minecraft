@@ -87,6 +87,36 @@ export class DateMinecraft {
         return new DateMinecraft(tick);
     }
 
+    static fromFormat(value: string): number {
+        const TICKS_PER_HOUR = DateMinecraft.TICKS_PER_DAY / 24;       // 1000
+        const TICKS_PER_MINUTE = TICKS_PER_HOUR / 60;                  // 50/3
+        const TICKS_PER_SECOND = TICKS_PER_MINUTE / 60;                // 5/18
+
+        let days = 0, hours = 0, minutes = 0, seconds = 0;
+
+        let m = value.match(/^D(\d+)T(\d+):(\d+)(?::(\d+))?$/);
+        if (m) {
+            days = parseInt(m[1]);
+            hours = parseInt(m[2]);
+            minutes = parseInt(m[3]);
+            seconds = m[4] !== undefined ? parseInt(m[4]) : 0;
+        } else {
+            m = value.match(/^T(\d+):(\d+)(?::(\d+))?$/) ?? value.match(/^(\d+):(\d+)(?::(\d+))?$/);
+            if (m) {
+                hours = parseInt(m[1]);
+                minutes = parseInt(m[2]);
+                seconds = m[3] !== undefined ? parseInt(m[3]) : 0;
+            } else {
+                throw new Error(`Invalid format: ${value}`);
+            }
+        }
+
+        return days * DateMinecraft.TICKS_PER_DAY
+            + hours * TICKS_PER_HOUR
+            + minutes * TICKS_PER_MINUTE
+            + seconds * TICKS_PER_SECOND;
+    }
+
     static now(): number {
         const ms = Date.now() - DateMinecraft.MINECRAFT_BIRTH;
         return (ms / 1000) * DateMinecraft.MS_PER_TICK;

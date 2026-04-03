@@ -143,6 +143,51 @@ describe("Date Minecraft", () => {
             });
         });
     });
+    describe("fromFormat", () => {
+        // hh:mm
+        test("'12:00' should return 12000 ticks", () => {
+            expect(DateMinecraft.fromFormat("12:00")).toBe(12_000);
+        });
+        test("'01:12' should return 1200 ticks", () => {
+            expect(DateMinecraft.fromFormat("01:12")).toBe(1_200);
+        });
+        // hh:mm:ss
+        test("'00:01:12' should return 20 ticks", () => {
+            expect(DateMinecraft.fromFormat("00:01:12")).toBe(20);
+        });
+        test("'01:12:00' should return 1200 ticks", () => {
+            expect(DateMinecraft.fromFormat("01:12:00")).toBe(1_200);
+        });
+        // Thh:mm
+        test("'T12:00' should return 12000 ticks", () => {
+            expect(DateMinecraft.fromFormat("T12:00")).toBe(12_000);
+        });
+        // Thh:mm:ss
+        test("'T00:01:12' should return 20 ticks", () => {
+            expect(DateMinecraft.fromFormat("T00:01:12")).toBe(20);
+        });
+        // DdThh:mm
+        test("'D1T00:00' should return 24000 ticks", () => {
+            expect(DateMinecraft.fromFormat("D1T00:00")).toBe(24_000);
+        });
+        test("'D3T00:00' should return 72000 ticks", () => {
+            expect(DateMinecraft.fromFormat("D3T00:00")).toBe(72_000);
+        });
+        // DdThh:mm:ss
+        test("'D1T00:00:00' should return 24000 ticks", () => {
+            expect(DateMinecraft.fromFormat("D1T00:00:00")).toBe(24_000);
+        });
+        test("'D0T12:00:00' should return 12000 ticks", () => {
+            expect(DateMinecraft.fromFormat("D0T12:00:00")).toBe(12_000);
+        });
+        test("'D72T00:00:00' should return 1728000 ticks", () => {
+            expect(DateMinecraft.fromFormat("D72T00:00:00")).toBe(1_728_000);
+        });
+        // invalid
+        test("invalid format should throw", () => {
+            expect(() => DateMinecraft.fromFormat("abc")).toThrow();
+        });
+    });
     describe("now", () => {
         test("should return a number", () => {
             expect(typeof DateMinecraft.now()).toBe("number");
