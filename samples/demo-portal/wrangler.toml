@@ -1,0 +1,22 @@
+name = "sample-demo-portal"
+compatibility_date = "2026-04-03"
+main = "dist/server/entry.mjs"
+no_bundle = true
+
+[assets]
+binding = "ASSETS"
+directory = "dist/client"
+
+[[kv_namespaces]]
+binding = "SESSION"
+id = "SESSION"
+
+[images]
+binding = "IMAGES"
+
+[[rules]]
+type = "ESModule"
+globs = ["**/*.js", "**/*.mjs"]
+
+[observability]
+enabled = true
