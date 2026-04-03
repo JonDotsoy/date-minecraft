@@ -129,6 +129,42 @@ function ControlTickToTime() {
     );
 }
 
+function ControlGameTimeToTick() {
+    const id = useId();
+    const [input, setInput] = useState("");
+
+    const result = (() => {
+        if (!input.trim()) return null;
+        try {
+            return DateMinecraft.fromFormat(input);
+        } catch {
+            return null;
+        }
+    })();
+
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div style={slotStyle}>
+                <label htmlFor={id} style={labelStyle}>Game Time</label>
+                <input
+                    id={id}
+                    type="text"
+                    value={input}
+                    placeholder="12:30  or  D1T6:00"
+                    onChange={e => setInput(e.target.value)}
+                    style={{ ...inputStyle, width: "140px" }}
+                />
+            </div>
+            {result !== null && (
+                <div style={slotStyle}>
+                    <span style={labelStyle}>Ticks</span>
+                    <span style={valueStyle}>{result.toLocaleString()}</span>
+                </div>
+            )}
+        </div>
+    );
+}
+
 function InputClock() {
     const id = useId();
     const [hour, setHour] = useState(6);
@@ -454,6 +490,11 @@ export function HomePage() {
             {/* Converter: ticks → time */}
             <McPanel title="TICK → TIME">
                 <ControlTickToTime />
+            </McPanel>
+
+            {/* Converter: game time → ticks */}
+            <McPanel title="GAME TIME → TICK">
+                <ControlGameTimeToTick />
             </McPanel>
 
             {/* Converter: hour → clock */}
