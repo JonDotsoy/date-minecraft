@@ -16,6 +16,28 @@ describe("Date Minecraft", () => {
             expect(DateMinecraft.IN_GAME_MS_PER_TICK).toBe(3_600);
         });
     });
+    describe("constructor", () => {
+        test("new DateMinecraft(number) behaves like fromTick", () => {
+            const d = new DateMinecraft(12_000);
+            expect(d.tick).toBe(12_000);
+            expect(d.hour).toBe(12);
+        });
+        test("new DateMinecraft(string) parses format", () => {
+            const d = new DateMinecraft("12:00");
+            expect(d.tick).toBe(12_000);
+            expect(d.hour).toBe(12);
+        });
+        test("new DateMinecraft('D1T00:00:00') equals tick 24000", () => {
+            const d = new DateMinecraft("D1T00:00:00");
+            expect(d.tick).toBe(24_000);
+        });
+        test("new DateMinecraft(string) throws RangeError on invalid range", () => {
+            expect(() => new DateMinecraft("00:60")).toThrow(RangeError);
+        });
+        test("new DateMinecraft(string) throws Error on invalid format", () => {
+            expect(() => new DateMinecraft("abc")).toThrow();
+        });
+    });
     describe("fromTick", () => {
         test("should parse tick 0 as hour=0, minute=0, second=0, millisecond=0", () => {
             const d = DateMinecraft.fromTick(0);

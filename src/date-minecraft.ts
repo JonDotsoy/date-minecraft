@@ -11,7 +11,8 @@ export class DateMinecraft {
     readonly minute: number;
     readonly hour: number;
 
-    private constructor(tick: number) {
+    constructor(value: string | number) {
+        const tick = typeof value === "string" ? DateMinecraft.fromFormat(value) : value;
         this.tick = tick;
         const totalMs = tick * DateMinecraft.IN_GAME_MS_PER_TICK;
         const totalSeconds = totalMs / 1000;
