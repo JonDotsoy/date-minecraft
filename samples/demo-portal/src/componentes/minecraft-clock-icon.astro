@@ -1,0 +1,22 @@
+---
+import { getImage } from "astro:assets";
+import minecraftClockIcon from "./minecraft-clock-icon.png";
+
+export const minecraftClockX192 = await getImage({
+    src: minecraftClockIcon,
+    width: 192,
+    height: 192,
+});
+
+export const minecraftClockX512 = await getImage({
+    src: minecraftClockIcon,
+    width: 512,
+    height: 512,
+});
+
+export const minecraftClockX600 = await getImage({
+    src: minecraftClockIcon,
+    width: 600,
+    height: 600,
+});
+---
