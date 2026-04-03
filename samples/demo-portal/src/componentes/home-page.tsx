@@ -350,7 +350,7 @@ function CodeBlock({ code }: { code: string }) {
 
 function ConversionSection() {
     const textStyle: React.CSSProperties = {
-        color: "#AAAAAA",
+        color: MC_DARK,
         fontSize: "7px",
         lineHeight: "2",
         marginBottom: "8px",
