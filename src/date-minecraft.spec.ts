@@ -144,15 +144,15 @@ describe("Date Minecraft", () => {
         });
     });
     describe("now", () => {
-        test("should return a DateMinecraft instance", () => {
-            expect(DateMinecraft.now()).toBeInstanceOf(DateMinecraft);
+        test("should return a number", () => {
+            expect(typeof DateMinecraft.now()).toBe("number");
         });
-        test("should have tick >= ticks since MINECRAFT_BIRTH", () => {
+        test("should return ticks within expected range", () => {
             const before = (Date.now() - DateMinecraft.MINECRAFT_BIRTH) / 1000 * DateMinecraft.MS_PER_TICK;
-            const d = DateMinecraft.now();
+            const ticks = DateMinecraft.now();
             const after = (Date.now() - DateMinecraft.MINECRAFT_BIRTH) / 1000 * DateMinecraft.MS_PER_TICK;
-            expect(d.tick).toBeGreaterThanOrEqual(before);
-            expect(d.tick).toBeLessThanOrEqual(after);
+            expect(ticks).toBeGreaterThanOrEqual(before);
+            expect(ticks).toBeLessThanOrEqual(after);
         });
         test("MINECRAFT_BIRTH should be May 16 2009 UTC", () => {
             expect(DateMinecraft.MINECRAFT_BIRTH).toBe(Date.UTC(2009, 4, 16, 0, 0, 0));

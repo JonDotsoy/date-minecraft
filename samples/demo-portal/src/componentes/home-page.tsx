@@ -3,19 +3,20 @@ import { DateMinecraft } from "../../../../src/date-minecraft";
 import { MinecraftClock } from "./minecraft-clock";
 
 const useCurrentTick = () => {
-    const [dateMinecraft, setDateMinecraft] = useState(() => DateMinecraft.now());
+    const [tick, setTick] = useState(() => DateMinecraft.now());
+    const dateMinecraft = useMemo(() => DateMinecraft.fromTick(tick), [tick]);
 
     useEffect(() => {
         let raf: number;
         const loop = () => {
-            setDateMinecraft(DateMinecraft.now());
+            setTick(DateMinecraft.now());
             raf = requestAnimationFrame(loop);
         };
         raf = requestAnimationFrame(loop);
         return () => cancelAnimationFrame(raf);
     }, []);
 
-    return [dateMinecraft.tick, dateMinecraft] as const;
+    return [tick, dateMinecraft] as const;
 };
 
 // ── Shared style tokens ──────────────────────────────────────────────────────

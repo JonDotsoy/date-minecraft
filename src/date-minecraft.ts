@@ -87,9 +87,8 @@ export class DateMinecraft {
         return new DateMinecraft(tick);
     }
 
-    static now(): DateMinecraft {
+    static now(): number {
         const ms = Date.now() - DateMinecraft.MINECRAFT_BIRTH;
-        const ticks = (ms / 1000) * DateMinecraft.MS_PER_TICK;
-        return new DateMinecraft(ticks);
+        return (ms / 1000) * DateMinecraft.MS_PER_TICK;
     }
 }
