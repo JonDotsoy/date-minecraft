@@ -16,6 +16,28 @@ describe("Date Minecraft", () => {
             expect(DateMinecraft.IN_GAME_MS_PER_TICK).toBe(3_600);
         });
     });
+    describe("constructor", () => {
+        test("new DateMinecraft(number) behaves like fromTick", () => {
+            const d = new DateMinecraft(12_000);
+            expect(d.tick).toBe(12_000);
+            expect(d.hour).toBe(12);
+        });
+        test("new DateMinecraft(string) parses format", () => {
+            const d = new DateMinecraft("12:00");
+            expect(d.tick).toBe(12_000);
+            expect(d.hour).toBe(12);
+        });
+        test("new DateMinecraft('D1T00:00:00') equals tick 24000", () => {
+            const d = new DateMinecraft("D1T00:00:00");
+            expect(d.tick).toBe(24_000);
+        });
+        test("new DateMinecraft(string) throws RangeError on invalid range", () => {
+            expect(() => new DateMinecraft("00:60")).toThrow(RangeError);
+        });
+        test("new DateMinecraft(string) throws Error on invalid format", () => {
+            expect(() => new DateMinecraft("abc")).toThrow();
+        });
+    });
     describe("fromTick", () => {
         test("should parse tick 0 as hour=0, minute=0, second=0, millisecond=0", () => {
             const d = DateMinecraft.fromTick(0);
@@ -141,6 +163,76 @@ describe("Date Minecraft", () => {
             test("should format tick 12000 with h11 as '00:00:00 PM'", () => {
                 expect(DateMinecraft.fromTick(12_000).toLocaleString(undefined, { hourCycle: "h11" })).toBe("Day 0, 00:00:00 PM");
             });
+        });
+    });
+    describe("fromFormat", () => {
+        // hh:mm
+        test("'12:00' should return 12000 ticks", () => {
+            expect(DateMinecraft.fromFormat("12:00")).toBe(12_000);
+        });
+        test("'01:12' should return 1200 ticks", () => {
+            expect(DateMinecraft.fromFormat("01:12")).toBe(1_200);
+        });
+        // hh:mm:ss
+        test("'00:01:12' should return 20 ticks", () => {
+            expect(DateMinecraft.fromFormat("00:01:12")).toBe(20);
+        });
+        test("'01:12:00' should return 1200 ticks", () => {
+            expect(DateMinecraft.fromFormat("01:12:00")).toBe(1_200);
+        });
+        // Thh:mm
+        test("'T12:00' should return 12000 ticks", () => {
+            expect(DateMinecraft.fromFormat("T12:00")).toBe(12_000);
+        });
+        // Thh:mm:ss
+        test("'T00:01:12' should return 20 ticks", () => {
+            expect(DateMinecraft.fromFormat("T00:01:12")).toBe(20);
+        });
+        // DdThh:mm
+        test("'D1T00:00' should return 24000 ticks", () => {
+            expect(DateMinecraft.fromFormat("D1T00:00")).toBe(24_000);
+        });
+        test("'D3T00:00' should return 72000 ticks", () => {
+            expect(DateMinecraft.fromFormat("D3T00:00")).toBe(72_000);
+        });
+        // DdThh:mm:ss
+        test("'D1T00:00:00' should return 24000 ticks", () => {
+            expect(DateMinecraft.fromFormat("D1T00:00:00")).toBe(24_000);
+        });
+        test("'D0T12:00:00' should return 12000 ticks", () => {
+            expect(DateMinecraft.fromFormat("D0T12:00:00")).toBe(12_000);
+        });
+        test("'D72T00:00:00' should return 1728000 ticks", () => {
+            expect(DateMinecraft.fromFormat("D72T00:00:00")).toBe(1_728_000);
+        });
+        // out of range
+        test("minutes >= 60 should throw RangeError", () => {
+            expect(() => DateMinecraft.fromFormat("00:60")).toThrow(RangeError);
+        });
+        test("seconds >= 60 should throw RangeError", () => {
+            expect(() => DateMinecraft.fromFormat("00:00:60")).toThrow(RangeError);
+        });
+        test("hours >= 24 should throw RangeError", () => {
+            expect(() => DateMinecraft.fromFormat("24:00")).toThrow(RangeError);
+        });
+        // invalid format
+        test("invalid format should throw", () => {
+            expect(() => DateMinecraft.fromFormat("abc")).toThrow();
+        });
+    });
+    describe("now", () => {
+        test("should return a number", () => {
+            expect(typeof DateMinecraft.now()).toBe("number");
+        });
+        test("should return ticks within expected range", () => {
+            const before = (Date.now() - DateMinecraft.MINECRAFT_BIRTH) / 1000 * DateMinecraft.MS_PER_TICK;
+            const ticks = DateMinecraft.now();
+            const after = (Date.now() - DateMinecraft.MINECRAFT_BIRTH) / 1000 * DateMinecraft.MS_PER_TICK;
+            expect(ticks).toBeGreaterThanOrEqual(before);
+            expect(ticks).toBeLessThanOrEqual(after);
+        });
+        test("MINECRAFT_BIRTH should be May 16 2009 UTC", () => {
+            expect(DateMinecraft.MINECRAFT_BIRTH).toBe(Date.UTC(2009, 4, 16, 0, 0, 0));
         });
     });
     describe("toString", () => {
