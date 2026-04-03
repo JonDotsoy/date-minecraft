@@ -2,28 +2,20 @@ import { useEffect, useId, useMemo, useState } from "react";
 import { DateMinecraft } from "../../../../src/date-minecraft";
 import { MinecraftClock } from "./minecraft-clock";
 
-const MINECRAFT_BIRTH = Date.UTC(2009, 4, 16, 0, 0, 0);
-
-const getTotalTicksSinceBirth = () => {
-    const ms = Date.now() - MINECRAFT_BIRTH;
-    return (ms / 1000) * DateMinecraft.MS_PER_TICK;
-};
-
 const useCurrentTick = () => {
-    const [tick, setTick] = useState(() => getTotalTicksSinceBirth());
-    const dateMinecraft = useMemo(() => DateMinecraft.fromTick(tick), [tick]);
+    const [dateMinecraft, setDateMinecraft] = useState(() => DateMinecraft.now());
 
     useEffect(() => {
         let raf: number;
         const loop = () => {
-            setTick(getTotalTicksSinceBirth());
+            setDateMinecraft(DateMinecraft.now());
             raf = requestAnimationFrame(loop);
         };
         raf = requestAnimationFrame(loop);
         return () => cancelAnimationFrame(raf);
     }, []);
 
-    return [tick, dateMinecraft] as const;
+    return [dateMinecraft.tick, dateMinecraft] as const;
 };
 
 // ── Shared style tokens ──────────────────────────────────────────────────────

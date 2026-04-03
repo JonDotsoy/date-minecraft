@@ -143,6 +143,21 @@ describe("Date Minecraft", () => {
             });
         });
     });
+    describe("now", () => {
+        test("should return a DateMinecraft instance", () => {
+            expect(DateMinecraft.now()).toBeInstanceOf(DateMinecraft);
+        });
+        test("should have tick >= ticks since MINECRAFT_BIRTH", () => {
+            const before = (Date.now() - DateMinecraft.MINECRAFT_BIRTH) / 1000 * DateMinecraft.MS_PER_TICK;
+            const d = DateMinecraft.now();
+            const after = (Date.now() - DateMinecraft.MINECRAFT_BIRTH) / 1000 * DateMinecraft.MS_PER_TICK;
+            expect(d.tick).toBeGreaterThanOrEqual(before);
+            expect(d.tick).toBeLessThanOrEqual(after);
+        });
+        test("MINECRAFT_BIRTH should be May 16 2009 UTC", () => {
+            expect(DateMinecraft.MINECRAFT_BIRTH).toBe(Date.UTC(2009, 4, 16, 0, 0, 0));
+        });
+    });
     describe("toString", () => {
         test("should format tick 0 as D0T00:00:00.000", () => {
             expect(DateMinecraft.fromTick(0).toString()).toBe("D0T00:00:00.000");

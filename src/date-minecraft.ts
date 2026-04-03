@@ -3,6 +3,7 @@ export class DateMinecraft {
     static TICKS_PER_SECOND = 20;
     static TICKS_PER_DAY = 24_000;
     static IN_GAME_MS_PER_TICK = 86_400_000 / DateMinecraft.TICKS_PER_DAY; // 3600
+    static MINECRAFT_BIRTH = Date.UTC(2009, 4, 16, 0, 0, 0);
 
     readonly tick: number;
     readonly millisecond: number;
@@ -84,5 +85,11 @@ export class DateMinecraft {
 
     static fromTick(tick: number): DateMinecraft {
         return new DateMinecraft(tick);
+    }
+
+    static now(): DateMinecraft {
+        const ms = Date.now() - DateMinecraft.MINECRAFT_BIRTH;
+        const ticks = (ms / 1000) * DateMinecraft.MS_PER_TICK;
+        return new DateMinecraft(ticks);
     }
 }
