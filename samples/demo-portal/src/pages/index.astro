@@ -2,9 +2,14 @@
 import { HomePage } from "../componentes/home-page";
 import { getImage } from "astro:assets";
 import coverImage from "../componentes/cover.png";
+import minecraftClockIcon from "../componentes/minecraft-clock-icon.png";
 
 const cover = await getImage({ src: coverImage, width: 1200, height: 630 });
 const coverUrl = Astro.url.origin + cover.src;
+
+const appleTouchIcon = await getImage({ src: minecraftClockIcon, width: 180, height: 180, format: "png" });
+const favicon32 = await getImage({ src: minecraftClockIcon, width: 32, height: 32, format: "png" });
+const favicon16 = await getImage({ src: minecraftClockIcon, width: 16, height: 16, format: "png" });
 ---
 
 <html lang="en">
@@ -12,6 +17,10 @@ const coverUrl = Astro.url.origin + cover.src;
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
+		<link rel="apple-touch-icon" sizes="180x180" href={appleTouchIcon.src} />
+		<link rel="icon" type="image/png" sizes="32x32" href={favicon32.src} />
+		<link rel="icon" type="image/png" sizes="16x16" href={favicon16.src} />
+		<link rel="manifest" href="/site.webmanifest" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>Minecraft Date Clock</title>
