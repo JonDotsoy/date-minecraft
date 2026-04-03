@@ -346,6 +346,74 @@ function CodeBlock({ code }: { code: string }) {
     );
 }
 
+// ── Conversion section ────────────────────────────────────────────────────────
+
+function ConversionSection() {
+    const textStyle: React.CSSProperties = {
+        color: "#AAAAAA",
+        fontSize: "7px",
+        lineHeight: "2",
+        marginBottom: "8px",
+    };
+    const highlightStyle: React.CSSProperties = {
+        color: "#FFFF55",
+        textShadow: "1px 1px #3F3F00",
+    };
+    const formulaRowStyle: React.CSSProperties = {
+        display: "grid",
+        gridTemplateColumns: "90px 12px 80px 1fr",
+        alignItems: "center",
+        gap: "4px",
+        background: MC_DARK,
+        border: `1px solid ${MC_BLACK}`,
+        padding: "4px 8px",
+        marginBottom: "2px",
+    };
+
+    return (
+        <>
+            <McPanel title="WHAT IS A TICK?">
+                <div style={textStyle}>
+                    A <span style={highlightStyle}>tick</span> is Minecraft&apos;s fundamental unit of time. The game engine processes every event — mob movement, redstone circuits, block updates — exactly once per tick. Under normal conditions the server runs at <span style={highlightStyle}>20 ticks per second (TPS)</span>.
+                </div>
+                <div style={textStyle}>
+                    Inspired by the <span style={highlightStyle}>Unix epoch</span> (seconds since January 1, 1970), this library anchors its own epoch at <span style={highlightStyle}>May 16, 2009</span> — the release date of Minecraft Classic. Every real-world moment can therefore be expressed as a unique tick offset from that date.
+                </div>
+                <div style={textStyle}>
+                    Because Minecraft has no native concept of months or years, elapsed time is expressed using only days, hours, minutes, and seconds:
+                </div>
+                <div style={{ ...slotStyle, justifyContent: "center", marginBottom: "0" }}>
+                    <span style={{ color: "#AAFFAA", fontSize: "9px", textShadow: "1px 1px #003F00", letterSpacing: "2px" }}>
+                        Days 14, 12:32:11
+                    </span>
+                </div>
+            </McPanel>
+
+            <McPanel title="TICK CONVERSION">
+                <div style={{ ...textStyle, marginBottom: "8px" }}>
+                    Since <span style={highlightStyle}>1 tick = 50 ms</span> of real time, every larger unit is a fixed multiple:
+                </div>
+                {([
+                    { ticks: "20", unit: "1 second", formula: "20 × 1" },
+                    { ticks: "1,200", unit: "1 minute", formula: "20 × 60" },
+                    { ticks: "72,000", unit: "1 hour", formula: "20 × 3,600" },
+                    { ticks: "1,728,000", unit: "1 day", formula: "20 × 86,400" },
+                ] as const).map(row => (
+                    <div key={row.unit} style={formulaRowStyle}>
+                        <span style={{ color: "#FFFF55", fontSize: "7px", textShadow: "1px 1px #3F3F00" }}>{row.ticks} ticks</span>
+                        <span style={{ color: "#555555", fontSize: "7px" }}>=</span>
+                        <span style={{ color: "#AAFFAA", fontSize: "7px" }}>{row.unit}</span>
+                        <span style={{ color: "#555555", fontSize: "7px" }}>({row.formula})</span>
+                    </div>
+                ))}
+                <div style={{ ...textStyle, marginTop: "10px", marginBottom: "0" }}>
+                    To break a tick count into human time: divide by <span style={highlightStyle}>1,728,000</span> for days → remainder by <span style={highlightStyle}>72,000</span> for hours → remainder by <span style={highlightStyle}>1,200</span> for minutes → remainder by <span style={highlightStyle}>20</span> for seconds.
+                </div>
+            </McPanel>
+        </>
+    );
+}
+
 // ── Ticks reference table ────────────────────────────────────────────────────
 
 const REFERENCE_TICKS = [0, 1000, 6000, 12000, 18000, 24000, 48000, 72000];
@@ -506,6 +574,9 @@ export function HomePage() {
             <McPanel title="TICKS REFERENCE">
                 <TickReferenceTable />
             </McPanel>
+
+            {/* Conversion explainer */}
+            <ConversionSection />
 
             {/* Usage instructions */}
             <McPanel title="HOW TO USE">
