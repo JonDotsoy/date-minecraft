@@ -124,6 +124,6 @@ export class DateMinecraft {
 
     static now(): number {
         const ms = Date.now() - DateMinecraft.MINECRAFT_BIRTH;
-        return (ms / 1000) * DateMinecraft.MS_PER_TICK;
+        return ms / DateMinecraft.MS_PER_TICK;
     }
 }

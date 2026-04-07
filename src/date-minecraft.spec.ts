@@ -1,4 +1,5 @@
-import { expect, test, describe } from "bun:test";
+import { expect, test, describe, setSystemTime, afterEach } from "bun:test";
+import { Temporal } from "temporal-polyfill";
 import { DateMinecraft } from "./date-minecraft";
 
 describe("Date Minecraft", () => {
@@ -221,18 +222,50 @@ describe("Date Minecraft", () => {
         });
     });
     describe("now", () => {
+        afterEach(() => setSystemTime());
+
         test("should return a number", () => {
             expect(typeof DateMinecraft.now()).toBe("number");
         });
         test("should return ticks within expected range", () => {
-            const before = (Date.now() - DateMinecraft.MINECRAFT_BIRTH) / 1000 * DateMinecraft.MS_PER_TICK;
+            const before = (Date.now() - DateMinecraft.MINECRAFT_BIRTH) / DateMinecraft.MS_PER_TICK;
             const ticks = DateMinecraft.now();
-            const after = (Date.now() - DateMinecraft.MINECRAFT_BIRTH) / 1000 * DateMinecraft.MS_PER_TICK;
+            const after = (Date.now() - DateMinecraft.MINECRAFT_BIRTH) / DateMinecraft.MS_PER_TICK;
             expect(ticks).toBeGreaterThanOrEqual(before);
             expect(ticks).toBeLessThanOrEqual(after);
         });
         test("MINECRAFT_BIRTH should be May 16 2009 UTC", () => {
             expect(DateMinecraft.MINECRAFT_BIRTH).toBe(Date.UTC(2009, 4, 16, 0, 0, 0));
+        });
+        test("should show 12 hours have passed after 10 real minutes from Minecraft birth", () => {
+            const birth = Temporal.Instant.fromEpochMilliseconds(DateMinecraft.MINECRAFT_BIRTH);
+            const simulatedNow = birth.add({ minutes: 10 });
+            setSystemTime(simulatedNow.epochMilliseconds);
+
+            const d = new DateMinecraft(DateMinecraft.now());
+            expect(d.total({ unit: "hours" })).toBeGreaterThanOrEqual(12);
+        });
+        test("should return a valid tick count at today 2pm regardless of game time", () => {
+            const simulatedNow = Temporal.Instant.from("2026-04-06T14:00:00Z").add({ minutes: 20 });
+            setSystemTime(simulatedNow.epochMilliseconds);
+
+            const d = new DateMinecraft(DateMinecraft.now());
+            expect(d.hour).toBe(0);
+        });
+        test("should return hour 12 at today 2pm + 10 minutes", () => {
+            const simulatedNow = Temporal.Instant.from("2026-04-06T14:00:00Z").add({ minutes: 10 });
+            setSystemTime(simulatedNow.epochMilliseconds);
+
+            const d = new DateMinecraft(DateMinecraft.now());
+            expect(d.hour).toBe(12);
+        });
+        test("should show 1 day has passed after 20 real minutes from Minecraft birth", () => {
+            const birth = Temporal.Instant.fromEpochMilliseconds(DateMinecraft.MINECRAFT_BIRTH);
+            const simulatedNow = birth.add({ minutes: 20 });
+            setSystemTime(simulatedNow.epochMilliseconds);
+
+            const d = new DateMinecraft(DateMinecraft.now());
+            expect(d.total({ unit: "days" })).toBeGreaterThanOrEqual(1);
         });
     });
     describe("toString", () => {
